@@ -1,14 +1,15 @@
 from __future__ import print_function
 
 def run(l):
-    seen = [0]
+    seen = set()
+    seen.add(0)
     current = 0
     while True:
         for i in l:
             current += i
             if current in seen:
                 return current
-            seen.append(current)
+            seen.add(current)
         print("cycle", current, len(seen))
 
 t1 = [+1, -1]
