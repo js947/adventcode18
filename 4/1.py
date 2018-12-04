@@ -5,23 +5,20 @@ Log = namedtuple('Log', ['id', 'sleeps'])
 
 def read_log(filename):
     def gen1():
-        for line in open(filename, 'r'):
-            d, t, *r = line.split()
-            time = datetime.strptime(' '.join([d,t]), '[%Y-%m-%d %H:%M]')
-            yield (time, r)
-    def gen2():
         i = None
-        for t, r in sorted(gen1()):
+        for line in sorted(open(filename, 'r')):
+            d, t, *r = line.split()
+            t = datetime.strptime(d+' '+t, '[%Y-%m-%d %H:%M]').minute
+
             if r[0] == 'Guard':
-                if i:
-                    yield i
+                if i: yield i
                 i = Log(int(r[1][1:]), [])
             if r[0] == 'falls':
-                b = t.minute
+                b = t
             if r[0] == 'wakes':
-                e = t.minute
+                e = t
                 i.sleeps.append((b, e))
-    return gen2
+    return gen1
 
 def part1(filename):
     log = read_log(filename)
