@@ -30,7 +30,9 @@ assert count_overlaps(read_claims('puzzle.in')) == 121259
 
 def find_nonoverlapping(claims):
     h = map_claims(claims)
-    return [c for c in claims() if all(h[loc] == 1 for loc in claimed_cells(c))][0]
+    for c in claims():
+        if all(h[loc] == 1 for loc in claimed_cells(c)):
+            return c
 
 assert find_nonoverlapping(read_claims('test.in')).idx == 3
 assert find_nonoverlapping(read_claims('puzzle.in')).idx == 239
