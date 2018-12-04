@@ -1,16 +1,13 @@
 from __future__ import print_function
 from collections import namedtuple, defaultdict
+import re
 
 Claim = namedtuple('Claim', ['idx', 'x', 'y', 'dx', 'dy'])
 
 def read_claims(filename):
     def gen():
         for line in open(filename, 'r'):
-            idx, _, xy, dxy = line.split()
-            idx = int(idx[1:])
-            x, y = [int(z) for z in xy[:-1].split(',')]
-            dx, dy = [int(z) for z in dxy.split('x')]
-            yield Claim(idx, x, y, dx, dy)
+            yield Claim(*map(int, re.findall(r'\d+', line)))
     return gen
 
 def claimed_cells(c):
@@ -28,25 +25,12 @@ def map_claims(claims):
 def count_overlaps(claims):
     return sum(1 for count in map_claims(claims).values() if count > 1)
 
-for k, c in enumerate(read_claims('test.in')()):
-    print(c, list(claimed_cells(c)))
-
-print(count_overlaps(read_claims('test.in')))
-print(count_overlaps(read_claims('puzzle.in')))
+assert count_overlaps(read_claims('test.in')) == 4
+assert count_overlaps(read_claims('puzzle.in')) == 121259
 
 def find_nonoverlapping(claims):
     h = map_claims(claims)
+    return [c for c in claims() if all(h[loc] == 1 for loc in claimed_cells(c))][0]
 
-    def allmine(c):
-        for loc in claimed_cells(c):
-            if h[loc] > 1:
-                return False
-        return True
-
-    for c in claims():
-        if allmine(c):
-            return c
-    print('no uniq claim found')
-
-print(find_nonoverlapping(read_claims('test.in')))
-print(find_nonoverlapping(read_claims('puzzle.in')))
+assert find_nonoverlapping(read_claims('test.in')).idx == 3
+assert find_nonoverlapping(read_claims('puzzle.in')).idx == 239
