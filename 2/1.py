@@ -1,9 +1,7 @@
-from collections import defaultdict
+from collections import Counter
 
 def count(s):
-    h = defaultdict(int)
-    for c in s:
-        h[c] += 1
+    h = Counter(c for c in s)
     return (2 in h.values()), (3 in h.values())
 
 assert count("abcdef") == (False, False)
