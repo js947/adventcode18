@@ -1,5 +1,5 @@
 from datetime import datetime
-from collections import namedtuple, defaultdict
+from collections import namedtuple, defaultdict, Counter
 
 Log = namedtuple('Log', ['id', 'sleeps'])
 
@@ -22,19 +22,19 @@ def read_log(filename):
 
 def part1(filename):
     log = read_log(filename)
-    
-    d = defaultdict(int)
+
+    d = Counter()
     for l in log():
         d[l.id] += sum(e - b for b, e in l.sleeps)
-    most_sleepy_id = sorted(d.items(), key=lambda x: x[1], reverse=True)[0][0]
+    most_sleepy_id = d.most_common(1)[0][0]
 
-    d = defaultdict(int)
+    d = Counter()
     for l in log():
         if l.id != most_sleepy_id: continue
         for b, e in l.sleeps:
             for m in range(b, e):
                 d[m] += 1
-    most_sleepy_min = sorted(d.items(), key=lambda x: x[1], reverse=True)[0][0]
+    most_sleepy_min = d.most_common(1)[0][0]
 
     print('part1 %s id %s min %s checksum %s' %
             (filename, most_sleepy_id, most_sleepy_min, most_sleepy_id*most_sleepy_min))
