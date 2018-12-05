@@ -1,5 +1,5 @@
 from __future__ import print_function
-from collections import namedtuple, defaultdict
+from collections import namedtuple, defaultdict, Counter
 import re
 
 Claim = namedtuple('Claim', ['idx', 'x', 'y', 'dx', 'dy'])
@@ -16,11 +16,7 @@ def claimed_cells(c):
             yield i, j
 
 def map_claims(claims):
-    h=defaultdict(int)
-    for c in claims():
-        for loc in claimed_cells(c):
-            h[loc] += 1
-    return h
+    return Counter(loc for c in claims() for loc in claimed_cells(c))
 
 def count_overlaps(claims):
     return sum(1 for count in map_claims(claims).values() if count > 1)
